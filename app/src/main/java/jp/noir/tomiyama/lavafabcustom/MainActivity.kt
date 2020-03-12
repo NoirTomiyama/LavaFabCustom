@@ -1,11 +1,17 @@
 package jp.noir.tomiyama.lavafabcustom
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import kotlin.concurrent.schedule
 
 class MainActivity : AppCompatActivity() {
+
+    var mTimer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,11 +21,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
+
+        val handler = Handler()
+
         lava_fab_bottom_right.setLavaBackgroundResColor(R.color.color_purple)
 
         with(lava_fab_center) {
-            setParentOnClickListener { lava_fab_center.trigger() }
-            setChildOnClickListener(com.bitvale.lavafab.Child.TOP) { showToast() }
+            setParentOnClickListener {
+                lava_fab_center.trigger()
+            }
+            setChildOnClickListener(com.bitvale.lavafab.Child.TOP) {
+                showToast()
+                val intent = Intent(applicationContext, TestActivity::class.java)
+                startActivity(intent)
+                // 0.1秒遅らせる
+                mTimer = Timer(false)
+                mTimer?.schedule(100) {
+                    handler.post {
+                        lava_fab_center.collapse()
+                    }
+                }
+            }
             setChildOnClickListener(com.bitvale.lavafab.Child.RIGHT_TOP) { showToast() }
             setChildOnClickListener(com.bitvale.lavafab.Child.RIGHT) { showToast() }
             setChildOnClickListener(com.bitvale.lavafab.Child.RIGHT_BOTTOM) { showToast() }
